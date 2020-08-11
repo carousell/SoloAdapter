@@ -9,7 +9,7 @@ Adapter with single ViewHolder for Android RecyclerView.
 
 With setup of Jitpack first, than add dependency in your build.gradle
 ```groovy
-implementation 'com.github.carousell:SoloAdapter:0.1'
+implementation 'com.github.carousell:SoloAdapter:0.2'
 ```
 
 ## Concept
@@ -22,22 +22,22 @@ Instead of manually add everything again and again, this library help you to pro
 
 1. Pass static View xml
 ```kotlin
-val adapter = SoloAdapter<Unit>(R.layout.some_layout)
+val adapter = SoloAdapter(R.layout.some_layout)
 ```
 
 2. Pass View directly
 ```kotlin
 val view = TextView(this)
 
-val adapter = SoloAdapter<Unit>(view)
+val adapter = SoloAdapter(view)
 ```
 
 3. Setup bind function
 ```kotlin
-val adapter = SoloAdapter<String>(R.layout.some_layout)
+val adapter = SoloAdapter(R.layout.some_layout)
 
-adapter.setData("New string") { view, string ->
-    view.findViewById<TextView>(R.id.textView).text = string
+adapter.bind { view ->
+    view.findViewById<TextView>(R.id.textView).text = "some_string"
 }
 ```
 

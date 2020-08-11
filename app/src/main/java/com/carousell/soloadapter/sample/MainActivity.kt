@@ -18,21 +18,21 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun useCase1() {
-        recyclerView.adapter = SoloAdapter<Unit>(R.layout.layout_text)
+        recyclerView.adapter = SoloAdapter(R.layout.layout_text)
     }
 
     private fun useCase2() {
         val text = TextView(this)
         text.setText(R.string.simple_text)
-        recyclerView.adapter = SoloAdapter<Unit>(text)
+        recyclerView.adapter = SoloAdapter(text)
     }
 
     private fun useCase3() {
-        recyclerView.adapter = SoloAdapter<String>(R.layout.layout_text).also {
-            it.setData("New string") { view, string ->
-                view.findViewById<TextView>(R.id.textView).text = string
-            }
+        val data = "New string"
+        val adapter = SoloAdapter(R.layout.layout_text)
+        adapter.bind { view ->
+            view.findViewById<TextView>(R.id.textView).text = data
         }
-
+        recyclerView.adapter = adapter
     }
 }

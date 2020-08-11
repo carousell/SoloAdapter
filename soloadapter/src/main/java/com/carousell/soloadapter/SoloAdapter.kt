@@ -6,13 +6,12 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 
-class SoloAdapter<T> : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
+class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     @LayoutRes
     private var layoutId: Int? = null
     private var view: View? = null
 
-    private var data: T? = null
-    private var bindFunction: ((itemView: View, data: T) -> Unit)? = null
+    private var bindFunction: ((itemView: View) -> Unit)? = null
 
     constructor(view: View) : super() {
         this.view = view
@@ -22,8 +21,7 @@ class SoloAdapter<T> : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
         this.layoutId = layoutId
     }
 
-    fun setData(data: T, bindFunction: (itemView: View, data: T) -> Unit) {
-        this.data = data
+    fun bind(bindFunction: (itemView: View) -> Unit) {
         this.bindFunction = bindFunction
     }
 
@@ -37,9 +35,7 @@ class SoloAdapter<T> : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     override fun getItemCount() = 1
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        data?.let {
-            bindFunction?.invoke(holder.itemView, it)
-        }
+        bindFunction?.invoke(holder.itemView)
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
