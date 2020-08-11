@@ -41,6 +41,8 @@ adapter.bind { view ->
 }
 ```
 
+Go to ./app module for more information.
+
 ## Contributing
 
 Thank you for being interested in contributing to this project. Check out the [CONTRIBUTING](https://github.com/carousell/SoloAdapter/blob/master/CONTRIBUTING.md) document for more info.
