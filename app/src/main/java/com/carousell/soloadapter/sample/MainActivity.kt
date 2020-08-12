@@ -22,12 +22,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun adapter2(): SoloAdapter {
         val view = LayoutInflater.from(this).inflate(R.layout.layout_text, recyclerView, false)
-        view.findViewById<TextView>(R.id.textView).setText(R.string.simple_text)
+        view.findViewById<TextView>(R.id.textView).setText(R.string.new_text)
         return SoloAdapter(view)
     }
 
     private fun adapter3(): SoloAdapter {
-        val data = "New string"
+        val data = "Dynamic Text"
         val adapter = SoloAdapter(R.layout.layout_text)
         adapter.bind { view ->
             view.findViewById<TextView>(R.id.textView).text = data

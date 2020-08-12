@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">SoloAdapter</string>
     <string name="simple_text">Simple Text</string>
+    <string name="new_text">New Text</string>
 </resources>
