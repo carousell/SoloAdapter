@@ -10,7 +10,7 @@ class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     @LayoutRes
     private var layoutId: Int? = null
     private var view: View? = null
-
+    private var shown: Boolean = true
     private var bindFunction: ((itemView: View) -> Unit)? = null
 
     constructor(view: View) : super() {
@@ -25,6 +25,17 @@ class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
         this.bindFunction = bindFunction
     }
 
+    fun setShown(isShown: Boolean) {
+        if (shown != isShown) {
+            shown = isShown
+            if (shown) {
+                notifyItemInserted(0)
+            } else {
+                notifyItemRemoved(0)
+            }
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val holderView = view ?: layoutId?.let { layoutId ->
             LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
@@ -32,7 +43,7 @@ class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
         return ViewHolder(holderView)
     }
 
-    override fun getItemCount() = 1
+    override fun getItemCount() = if (shown) 1 else 0
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         bindFunction?.invoke(holder.itemView)
