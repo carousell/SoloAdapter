@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">SoloAdapter</string>
     <string name="simple_text">Simple Text</string>
-    <string name="new_text">New Text</string>
+    <string name="show_all">Click to show all</string>
 </resources>
