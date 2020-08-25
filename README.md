@@ -1,5 +1,8 @@
 # SoloAdapter
 
+[![CircleCI](https://circleci.com/gh/carousell/SoloAdapter.svg?style=shield)](https://circleci.com/gh/carousell/SoloAdapter)
+[![jitpack](https://jitpack.io/v/carousell/SoloAdapter.svg)](https://jitpack.io/#carousell/SoloAdapter)
+
 Adapter with single ViewHolder for Android RecyclerView.
 
 ## Install
