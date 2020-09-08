@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 
 class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     @LayoutRes
@@ -12,6 +13,33 @@ class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     private var view: View? = null
     private var shown: Boolean = true
     private var bindFunction: ((itemView: View) -> Unit)? = null
+
+    private var bindAdapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>? = null
+    private val bindAdapterDataObserver = object : AdapterDataObserver() {
+        override fun onChanged() {
+            checkBindAdapterVisibility()
+        }
+
+        override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
+            checkBindAdapterVisibility()
+        }
+
+        override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
+            checkBindAdapterVisibility()
+        }
+
+        override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+            checkBindAdapterVisibility()
+        }
+
+        override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+            checkBindAdapterVisibility()
+        }
+
+        override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+            checkBindAdapterVisibility()
+        }
+    }
 
     constructor(view: View) : super() {
         this.view = view
@@ -23,6 +51,26 @@ class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
 
     fun bind(bindFunction: (itemView: View) -> Unit) {
         this.bindFunction = bindFunction
+    }
+
+    fun checkBindAdapterVisibility() {
+        bindAdapter?.let { target ->
+            if (target.itemCount > 0 && !shown) {
+                setShown(true)
+            } else if (target.itemCount == 0 && shown) {
+                setShown(false)
+            }
+        }
+    }
+
+    fun bindAdapter(target: RecyclerView.Adapter<out RecyclerView.ViewHolder>) {
+        bindAdapter = target
+        target.registerAdapterDataObserver(bindAdapterDataObserver)
+    }
+
+    fun unBindAdapter(target: RecyclerView.Adapter<out RecyclerView.ViewHolder>) {
+        target.unregisterAdapterDataObserver(bindAdapterDataObserver)
+        bindAdapter = null
     }
 
     fun setShown(isShown: Boolean) {
