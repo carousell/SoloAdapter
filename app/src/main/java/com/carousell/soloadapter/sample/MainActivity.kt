@@ -12,8 +12,12 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private val dynamicAdapters = (1..100).map {
-        dynamicBindAdapter(it + 1)
+        dynamicBindAdapter("Click to hide $it")
     }
+    private val fakeTitleAdapter =
+        dynamicBindAdapter("Show/hide base on #3 of item", clickToHide = false).also {
+            it.bindAdapter(dynamicAdapters[2])
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         )
         recyclerView.adapter = adapter
 
+        adapter.addAdapter(fakeTitleAdapter)
         dynamicAdapters.forEach {
             adapter.addAdapter(it)
         }
@@ -44,13 +49,14 @@ class MainActivity : AppCompatActivity() {
         return SoloAdapter(view)
     }
 
-    private fun dynamicBindAdapter(index: Int): SoloAdapter {
-        val data = "Click to hide $index"
+    private fun dynamicBindAdapter(data: String, clickToHide: Boolean = true): SoloAdapter {
         val adapter = SoloAdapter(R.layout.layout_text)
         adapter.bind { view ->
             view.findViewById<TextView>(R.id.textView).text = data
-            view.setOnClickListener {
-                adapter.setShown(false)
+            if (clickToHide) {
+                view.setOnClickListener {
+                    adapter.setShown(false)
+                }
             }
         }
         return adapter
