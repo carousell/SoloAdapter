@@ -7,7 +7,7 @@ import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 
-class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
+open class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     @LayoutRes
     private var layoutId: Int? = null
     private var view: View? = null
