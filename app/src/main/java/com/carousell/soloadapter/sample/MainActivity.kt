@@ -7,9 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.carousell.soloadapter.SoloAdapter
-import kotlinx.android.synthetic.main.activity_main.*
+import com.carousell.soloadapter.sample.databinding.ActivityMainBinding
+import com.carousell.soloadapter.sample.databinding.LayoutTextBinding
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
+
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private val dynamicAdapters = (1..100).map {
         dynamicBindAdapter("Click to hide $it")
@@ -21,25 +25,36 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
-        recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+
+        val viewBindingAdapter = viewBindingAdapter()
         val adapter = ConcatAdapter(
             staticAdapter(),
-            customViewAdapter()
+            customViewAdapter(),
+            viewBindingAdapter
         )
-        recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
 
         adapter.addAdapter(fakeTitleAdapter)
         dynamicAdapters.forEach {
             adapter.addAdapter(it)
+        }
+
+        binding.btnShowViewBindingAdapter.setOnClickListener {
+            viewBindingAdapter.setShown(viewBindingAdapter.isShown().not())
         }
     }
 
     private fun staticAdapter() = SoloAdapter(R.layout.layout_text)
 
     private fun customViewAdapter(): SoloAdapter {
-        val view = LayoutInflater.from(this).inflate(R.layout.layout_text, recyclerView, false)
+        val view = LayoutInflater.from(this).inflate(
+            R.layout.layout_text,
+            binding.recyclerView, false
+        )
         view.findViewById<TextView>(R.id.textView).setText(R.string.show_all)
         view.setOnClickListener {
             dynamicAdapters.forEach {
@@ -51,12 +66,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun dynamicBindAdapter(data: String, clickToHide: Boolean = true): SoloAdapter {
         val adapter = SoloAdapter(R.layout.layout_text)
-        adapter.bind { view ->
+        adapter.setViewOnBind { view ->
             view.findViewById<TextView>(R.id.textView).text = data
             if (clickToHide) {
                 view.setOnClickListener {
                     adapter.setShown(false)
                 }
+            }
+        }
+        return adapter
+    }
+
+    private fun viewBindingAdapter(): SoloAdapter {
+        val adapter = SoloAdapter(layoutInflater, LayoutTextBinding::class.java, shown = false)
+        adapter.setViewBindingOnBind<LayoutTextBinding> {
+            val randomInt = Random.nextInt()
+            it.textView.text = getString(R.string.view_binding_text, randomInt)
+            it.root.setOnClickListener {
+                adapter.setShown(adapter.isShown().not())
             }
         }
         return adapter

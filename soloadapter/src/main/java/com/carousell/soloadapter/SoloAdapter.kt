@@ -6,13 +6,16 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
+import androidx.viewbinding.ViewBinding
 
 open class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     @LayoutRes
     private var layoutId: Int? = null
     private var view: View? = null
     private var shown: Boolean = true
-    private var bindFunction: ((itemView: View) -> Unit)? = null
+    private var viewOnBind: ((itemView: View) -> Unit)? = null
+    private var viewBinding: ViewBinding? = null
+    private var viewBindingOnBind: ((viewBinding: ViewBinding) -> Unit)? = null
 
     private var bindAdapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>? = null
     private val bindAdapterDataObserver = object : AdapterDataObserver() {
@@ -41,16 +44,44 @@ open class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
         }
     }
 
-    constructor(view: View) : super() {
+    constructor(view: View, shown: Boolean = true) : super() {
         this.view = view
+        this.shown = shown
     }
 
-    constructor(layoutId: Int) : super() {
+    constructor(layoutId: Int, shown: Boolean = true) : super() {
         this.layoutId = layoutId
+        this.shown = shown
     }
 
+    constructor(
+        layoutInflater: LayoutInflater,
+        viewBindingClass: Class<out ViewBinding>,
+        viewGroup: ViewGroup? = null,
+        attachToParent: Boolean = false,
+        shown: Boolean = true
+    ) : super() {
+         val method = viewBindingClass.getDeclaredMethod(
+            "inflate",
+            LayoutInflater::class.java,
+            ViewGroup::class.java,
+            Boolean::class.java
+        )
+        this.viewBinding = method.invoke(null, layoutInflater, viewGroup, attachToParent) as ViewBinding
+        this.shown = shown
+    }
+
+    @Deprecated("Use setViewOnBind instead", ReplaceWith("setViewOnBind(bindFunction)"))
     fun bind(bindFunction: (itemView: View) -> Unit) {
-        this.bindFunction = bindFunction
+        setViewOnBind(bindFunction)
+    }
+
+    fun setViewOnBind(viewOnBind: (itemView: View) -> Unit) {
+        this.viewOnBind = viewOnBind
+    }
+
+    fun <T : ViewBinding> setViewBindingOnBind(bindFunction: (viewBinding: T) -> Unit) {
+        this.viewBindingOnBind = bindFunction as (viewBinding: ViewBinding) -> Unit
     }
 
     fun checkBindAdapterVisibility() {
@@ -84,17 +115,27 @@ open class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
         }
     }
 
+    fun isShown() = shown
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val holderView = view ?: layoutId?.let { layoutId ->
-            LayoutInflater.from(parent.context).inflate(layoutId, parent, false)
-        } ?: throw RuntimeException("No existing View or Layout Id to generate ViewHolder")
+        val holderView = when {
+            view != null -> requireNotNull(view)
+            layoutId != null -> LayoutInflater.from(parent.context)
+                .inflate(requireNotNull(layoutId), parent, false)
+            viewBinding != null -> requireNotNull(viewBinding).root
+            else -> throw RuntimeException("No existing View or Layout Id to generate ViewHolder")
+        }
+
         return ViewHolder(holderView)
     }
 
     override fun getItemCount() = if (shown) 1 else 0
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        bindFunction?.invoke(holder.itemView)
+        when {
+            viewBinding != null -> viewBindingOnBind?.invoke(requireNotNull(viewBinding))
+            else -> viewOnBind?.invoke(holder.itemView)
+        }
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
