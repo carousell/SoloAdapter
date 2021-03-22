@@ -11,11 +11,14 @@ import androidx.viewbinding.ViewBinding
 open class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     @LayoutRes
     private var layoutId: Int? = null
+    
     private var view: View? = null
-    private var shown: Boolean = true
     private var viewOnBind: ((itemView: View) -> Unit)? = null
+
     private var viewBinding: ViewBinding? = null
     private var viewBindingOnBind: ((viewBinding: ViewBinding) -> Unit)? = null
+
+    private var shown: Boolean = true
 
     private var bindAdapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>? = null
     private val bindAdapterDataObserver = object : AdapterDataObserver() {

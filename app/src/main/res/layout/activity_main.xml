@@ -13,7 +13,6 @@
         android:layout_weight="1"
         tools:context=".MainActivity" />
 
-
     <LinearLayout
         android:id="@+id/layoutAction"
         android:layout_width="match_parent"
