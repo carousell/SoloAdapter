@@ -78,7 +78,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun viewBindingAdapter(): SoloAdapter {
-        val adapter = SoloAdapter(LayoutTextBinding.inflate(layoutInflater), shown = false)
+        val adapter = SoloAdapter(
+            LayoutTextBinding.inflate(layoutInflater, binding.recyclerView, false),
+            shown = false
+        )
         adapter.setViewBindingOnBind<LayoutTextBinding> {
             val randomInt = Random.nextInt()
             it.textView.text = getString(R.string.view_binding_text, randomInt)
