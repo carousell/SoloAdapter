@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun viewBindingAdapter(): SoloAdapter {
         val adapter = SoloAdapter(
-            LayoutTextBinding.inflate(layoutInflater, binding.recyclerView, false),
+            viewBindingCreator = { LayoutTextBinding.inflate(layoutInflater, it, false) },
             shown = false
         )
         adapter.setViewBindingOnBind<LayoutTextBinding> {

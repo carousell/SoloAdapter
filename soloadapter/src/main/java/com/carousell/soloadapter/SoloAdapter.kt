@@ -11,12 +11,13 @@ import androidx.viewbinding.ViewBinding
 open class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     @LayoutRes
     private var layoutId: Int? = null
-    
+
     private var view: View? = null
     private var viewOnBind: ((itemView: View) -> Unit)? = null
 
     private var viewBinding: ViewBinding? = null
     private var viewBindingOnBind: ((viewBinding: ViewBinding) -> Unit)? = null
+    private var viewBindingCreator: ((parent: ViewGroup) -> ViewBinding)? = null
 
     private var shown: Boolean = true
 
@@ -58,10 +59,10 @@ open class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     }
 
     constructor(
-        viewBinding: ViewBinding,
+        viewBindingCreator: ((parent: ViewGroup) -> ViewBinding),
         shown: Boolean = true
     ) : super() {
-        this.viewBinding = viewBinding
+        this.viewBindingCreator = viewBindingCreator
         this.shown = shown
     }
 
@@ -116,7 +117,9 @@ open class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
             view != null -> requireNotNull(view)
             layoutId != null -> LayoutInflater.from(parent.context)
                 .inflate(requireNotNull(layoutId), parent, false)
-            viewBinding != null -> requireNotNull(viewBinding).root
+            viewBindingCreator != null -> requireNotNull(viewBindingCreator).invoke(parent).also {
+                this.viewBinding = it
+            }.root
             else -> throw RuntimeException("No existing View or Layout Id to generate ViewHolder")
         }
 
