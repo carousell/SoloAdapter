@@ -55,19 +55,10 @@ open class SoloAdapter : RecyclerView.Adapter<SoloAdapter.ViewHolder> {
     }
 
     constructor(
-        layoutInflater: LayoutInflater,
-        viewBindingClass: Class<out ViewBinding>,
-        viewGroup: ViewGroup? = null,
-        attachToParent: Boolean = false,
+        viewBinding: ViewBinding,
         shown: Boolean = true
     ) : super() {
-         val method = viewBindingClass.getDeclaredMethod(
-            "inflate",
-            LayoutInflater::class.java,
-            ViewGroup::class.java,
-            Boolean::class.java
-        )
-        this.viewBinding = method.invoke(null, layoutInflater, viewGroup, attachToParent) as ViewBinding
+        this.viewBinding = viewBinding
         this.shown = shown
     }
 
