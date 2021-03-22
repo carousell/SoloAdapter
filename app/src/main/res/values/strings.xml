@@ -2,4 +2,6 @@
     <string name="app_name">SoloAdapter</string>
     <string name="simple_text">Simple Text</string>
     <string name="show_all">Click to show all</string>
+    <string name="btn_toggle_view_binding_adapter_visibility">Toggle ViewBindingAdapter visibility</string>
+    <string name="view_binding_text">View Binding Here! %1$d</string>
 </resources>
