@@ -1,19 +1,18 @@
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.github.dcendents.android-maven'
-
-group = 'com.github.carousell'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'maven-publish'
+}
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.2"
 
     defaultConfig {
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode Integer.parseInt("$envVersionCode")
+        versionName "$envVersionName"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -40,5 +39,28 @@ dependencies {
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+}
 
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/carousell/SoloAdapter")
+                credentials {
+                    username = project.findProperty("github.packages.username")
+                    password = project.findProperty("github.packages.token")
+                }
+            }
+        }
+        publications {
+            release(MavenPublication) {
+                groupId = "com.github.carousell"
+                artifactId = "soloadapter"
+                version = "$envVersionName"
+
+                from components.release
+            }
+        }
+    }
 }
